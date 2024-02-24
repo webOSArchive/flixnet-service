@@ -22,7 +22,7 @@ if (file_exists($resumefile)) {
         echo "Create OK!";
     } catch(Exception $ex) {
         echo ("<li>Warning, could not create resume file, import will not survive browser window close. To resolve, provide write access to: " . $resumefile);
-    }    
+    }
 }
 if (isset($_GET["resume"]))
     $rd = "disabled";
@@ -79,15 +79,16 @@ eol();
 echo "Checking Data file...";
 if (file_exists("../data/movies.json")) {
     $data = file_get_contents ("../data/movies.json");
-} 
+}
 if ($data != "") {
     echo "OK";
 } else {
     $data = getData("https://raw.githubusercontent.com/casbah-ma/cinedantan/master/public/database/movies.json");
     try {
         file_put_contents("../data/movies.json", $data);
-        if (!file_exists("../data/movies.json"))
-            throw new Exception("Could not create movie file");
+	$check = file_get_contents("../data/movies.json");
+	if ($check == "" || $check != $data)
+            throw new Exception("Could not populate movie file");
         echo "OK";
     } catch (Exception $ex) {
         echo "<li>Warning: could not load or save movie data, it will be fetched from the remote server repeatedly. You may need to set a lower max to avoid timeouts. Make data/movies.json writeable to avoid this condition.";
