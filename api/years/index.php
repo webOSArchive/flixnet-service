@@ -12,7 +12,7 @@ try {
 }
 header('Content-Type: application/json');
 //TODO: count of occurence?
-$sql = "SELECT * FROM tbl_genres ORDER BY genre";
+$sql = "SELECT UNIQUE year FROM tbl_movies ORDER BY year";
 
 $stmt = $conn->prepare($sql);
 $stmt->execute();
