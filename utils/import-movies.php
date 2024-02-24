@@ -3,6 +3,7 @@
 <?php
 include "../secrets.php";
 echo "Checking environment...";
+$errors = [];
 $resumefile = '../data/resume.txt';
 $resume;
 if (isset($_GET["resume"]))
@@ -139,51 +140,56 @@ if ($go) {
                         if ($useFile == "") {
                             echo " - Compatible movie file not found, skipping!" . eol();
                         } else {
-                            // Insert the movie record
-                            $sql = "INSERT INTO tbl_movies (imdb_id, tmdb_id, title, description, year, runtime, rating, language,
-                                is_adult, identifier, moviepath, poster, backdrop) values (:imdbid, :tmdbid, :title, :story, 
-                                :year, :runtime, :rating, :language, :adult, :identifier, :moviepath, :poster, :backdrop)";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->bindValue(':imdbid', $imdbid);
-                            $stmt->bindValue(':tmdbid', $tmdbData->movie_results[0]->id);
-                            $stmt->bindValue(':title', $movie['title']);
-                            $stmt->bindValue(':story', $movie['story']);
-                            $stmt->bindValue(':year', $movie['year']);
-                            $stmt->bindValue(':runtime', $movie['runtime']);
-                            $stmt->bindValue(':rating', $movie['rating']);
-                            $stmt->bindValue(':language', $tmdbData->movie_results[0]->original_language);
-                            $stmt->bindValue(':adult', $tmdbData->movie_results[0]->adult);
-                            $stmt->bindValue(':identifier', $movie['rating']);
-                            $stmt->bindValue(':moviepath', $useFile);
-                            $stmt->bindValue(':backdrop', $posterURL . $tmdbData->movie_results[0]->poster_path);
-                            $stmt->bindValue(':poster', $backdropURL . $tmdbData->movie_results[0]->backdrop_path);
-                            $stmt->execute();
-                            //TODO - handle bad data
-                            $movieid = $conn->lastInsertId();
-
-                            // Inserted related movie records
-                            foreach ($movie['related'] as $related) {
-                                $sql = "INSERT INTO tbl_movie_related (from_imdb_id, to_imdb_id) value (:from, :to)";
+                            try {
+                                // Insert the movie record
+                                $sql = "INSERT INTO tbl_movies (imdb_id, tmdb_id, title, description, year, runtime, rating, language,
+                                    is_adult, identifier, moviepath, poster, backdrop) values (:imdbid, :tmdbid, :title, :story, 
+                                    :year, :runtime, :rating, :language, :adult, :identifier, :moviepath, :poster, :backdrop)";
                                 $stmt = $conn->prepare($sql);
-                                $stmt->bindValue(':from', $imdbid);
-                                $stmt->bindValue(':to', $related);
+                                $stmt->bindValue(':imdbid', $imdbid);
+                                $stmt->bindValue(':tmdbid', $tmdbData->movie_results[0]->id);
+                                $stmt->bindValue(':title', $movie['title']);
+                                $stmt->bindValue(':story', $movie['story']);
+                                $stmt->bindValue(':year', $movie['year']);
+                                $stmt->bindValue(':runtime', $movie['runtime']);
+                                $stmt->bindValue(':rating', $movie['rating']);
+                                $stmt->bindValue(':language', $tmdbData->movie_results[0]->original_language);
+                                $stmt->bindValue(':adult', $tmdbData->movie_results[0]->adult);
+                                $stmt->bindValue(':identifier', $movie['rating']);
+                                $stmt->bindValue(':moviepath', $useFile);
+                                $stmt->bindValue(':backdrop', $posterURL . $tmdbData->movie_results[0]->poster_path);
+                                $stmt->bindValue(':poster', $backdropURL . $tmdbData->movie_results[0]->backdrop_path);
                                 $stmt->execute();
-                            }
+                                //TODO - handle bad data
+                                $movieid = $conn->lastInsertId();
 
-                            // Inserted related movie records
-                            foreach ($movie['genre'] as $genre) {
-                                $genreid = selectOrCreateGenreRecord($genre, $conn);
-                                if (!$genreid) {
-                                    //some movies have no genre
-                                } else {
-                                    $sql = "INSERT INTO tbl_movie_genres (movie_id, genre_id) value (:movieid, :genreid)";
+                                // Inserted related movie records
+                                foreach ($movie['related'] as $related) {
+                                    $sql = "INSERT INTO tbl_movie_related (from_imdb_id, to_imdb_id) value (:from, :to)";
                                     $stmt = $conn->prepare($sql);
-                                    $stmt->bindValue(':movieid', $movieid);
-                                    $stmt->bindValue(':genreid', $genreid);
-                                    $stmt->execute();                                 
+                                    $stmt->bindValue(':from', $imdbid);
+                                    $stmt->bindValue(':to', $related);
+                                    $stmt->execute();
                                 }
-                            }
-                            echo "- Inserted movie id: " . $movieid . " using file " . $useFile . eol();
+
+                                // Inserted related movie records
+                                foreach ($movie['genre'] as $genre) {
+                                    $genreid = selectOrCreateGenreRecord($genre, $conn);
+                                    if (!$genreid) {
+                                        //some movies have no genre
+                                    } else {
+                                        $sql = "INSERT INTO tbl_movie_genres (movie_id, genre_id) value (:movieid, :genreid)";
+                                        $stmt = $conn->prepare($sql);
+                                        $stmt->bindValue(':movieid', $movieid);
+                                        $stmt->bindValue(':genreid', $genreid);
+                                        $stmt->execute();                                 
+                                    }
+                                }
+                                echo "- Inserted movie id: " . $movieid . " using file " . $useFile . eol();
+                            } catch (Exception $ex) {
+                                echo "- ERROR inserting movie: " . $movie['title'] . eol();
+                                array_push($movie['title']);
+                            } 
                         }
                     }
                 }
@@ -199,6 +205,12 @@ if ($go) {
     echo "<hr>";
     if ($resume >= $total || $count >= $total) {
         echo "All done processing movies!" . eol();
+        if (count($errors) > 0) {
+            echo "Movies with errors...";
+            foreach ($errors as $error) {
+                echo "- " . $error . eol();
+            }
+        }
         file_put_contents($resumefile, 0);
     } else {
         echo "Continuing processing movies at " . $resume . " in " . $cooldown . " seconds..." . eol();
