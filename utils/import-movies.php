@@ -8,9 +8,11 @@ $resume;
 if (isset($_GET["resume"]))
     $resume = $_GET["resume"];
 // Open the file to get existing content
+$rd = "";
 if (file_exists($resumefile)) {
     $resume = file_get_contents($resumefile);
     echo "Read OK!";
+    $rd = "disabled";
 } else {
     try {
         file_put_contents($resumefile, 0);
@@ -21,7 +23,6 @@ if (file_exists($resumefile)) {
         echo ("<li>Warning, could not create resume file, import will not survive browser window close. To resolve, provide write access to: " . $resumefile);
     }    
 }
-$rd = "";
 if (isset($_GET["resume"]))
     $rd = "disabled";
 eol();
@@ -157,6 +158,7 @@ if ($go) {
                             $stmt->bindValue(':backdrop', $posterURL . $tmdbData->movie_results[0]->poster_path);
                             $stmt->bindValue(':poster', $backdropURL . $tmdbData->movie_results[0]->backdrop_path);
                             $stmt->execute();
+                            //TODO - handle bad data
                             $movieid = $conn->lastInsertId();
 
                             // Inserted related movie records

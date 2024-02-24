@@ -2,6 +2,9 @@
 
 - you probably want security on the utils folder
 - `utils/import-movies.php` works best if it can write to a text file called resume.txt and a movie file called `../data/movies.json`
+- movie data comes from: https://github.com/casbah-ma/cinedantan/ 
+- extra metadata comes from TMDB
+- movies come from Archive.org
 
 ## Create the Database
 
