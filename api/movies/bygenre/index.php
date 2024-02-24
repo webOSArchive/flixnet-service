@@ -18,7 +18,10 @@ if (isset($_GET["skip"]) && is_numeric($_GET["skip"]))
     $skip = $_GET["skip"];
 
 header('Content-Type: application/json');
-$sql = "SELECT * FROM tbl_genres WHERE genre LIKE :genre";
+if (is_numeric($genre))
+    $sql = "SELECT * FROM tbl_genres WHERE id=:genre";
+else
+    $sql = "SELECT * FROM tbl_genres WHERE genre LIKE :genre";
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':genre', $genre);
 $stmt->execute();
