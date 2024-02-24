@@ -1,21 +1,20 @@
 <?php
-include "../../secrets.php";
+include "../../database.php";
+$conn = connectDB();
 
-$conn;
-try {
-    $conn = new PDO("mysql:host=$dbserver;dbname=flixnet", $dbuser, $dbpasswd);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    echo "<br>Database Connection Error: " . $e->getMessage();
-    die();
-}
 header('Content-Type: application/json');
-//TODO: count of occurence?
 $sql = "SELECT UNIQUE year FROM tbl_movies ORDER BY year";
-
 $stmt = $conn->prepare($sql);
 $stmt->execute();
-$result = $stmt->fetchAll(PDO::FETCH_OBJ);
-echo json_encode($result);
+$years = $stmt->fetchAll(PDO::FETCH_OBJ);
+
+foreach ($years as $year) {
+    $sql = "SELECT COUNT(DISTINCT title) as total FROM tbl_movies where year=:year";
+    $stmt = $conn->prepare($sql);
+    $stmt->bindValue(':year', $year->year);
+    $stmt->execute();
+    $counts = $stmt->fetchAll(PDO::FETCH_OBJ);
+    $year->count = $counts[0]->total;
+}
+echo json_encode($years);
 ?>

@@ -1,5 +1,7 @@
 <?php
-include "../../../secrets.php";
+include "../../../database.php";
+$conn = connectDB();
+
 $query = "";
 if (isset($_GET["query"]))
     $query = $_GET["query"];
@@ -14,16 +16,7 @@ if ($take > 100)
 $skip = 0;
 if (isset($_GET["skip"]) && is_numeric($_GET["skip"]))
     $skip = $_GET["skip"];
-    
-$conn;
-try {
-    $conn = new PDO("mysql:host=$dbserver;dbname=flixnet", $dbuser, $dbpasswd);
-    // set the PDO error mode to exception
-    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch(PDOException $e) {
-    echo "<br>Database Connection Error: " . $e->getMessage();
-    die();
-}
+
 header('Content-Type: application/json');
 //TODO: how to do search properly
 if (!isset($_GET["skip"]))
