@@ -79,6 +79,8 @@ eol();
 echo "Checking Data file...";
 if (file_exists("../data/movies.json")) {
     $data = file_get_contents ("../data/movies.json");
+} 
+if ($data != "") {
     echo "OK";
 } else {
     $data = getData("https://raw.githubusercontent.com/casbah-ma/cinedantan/master/public/database/movies.json");
