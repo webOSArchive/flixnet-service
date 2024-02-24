@@ -21,7 +21,7 @@ header('Content-Type: application/json');
 if (!isset($_GET["skip"]))
     $sql = "SELECT * FROM tbl_movies WHERE year=:year ORDER BY RAND() LIMIT " . $take;
 else
-    $sql = "SELECT * FROM tbl_movies WHERE year=:year LIMIT " . $take . " OFFSET " . $skip;
+    $sql = "SELECT * FROM tbl_movies WHERE year=:year ORDER BY title LIMIT " . $take . " OFFSET " . $skip;
 
 $stmt = $conn->prepare($sql);
 $stmt->bindValue(':year', $year);

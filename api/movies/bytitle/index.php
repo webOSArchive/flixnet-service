@@ -18,14 +18,10 @@ if (isset($_GET["skip"]) && is_numeric($_GET["skip"]))
     $skip = $_GET["skip"];
 
 header('Content-Type: application/json');
-//TODO: how to do search properly
-if (!isset($_GET["skip"]))
-    $sql = "SELECT * FROM tbl_movies WHERE title LIKE `:query` ORDER BY RAND() LIMIT " . $take;
-else
-    $sql = "SELECT * FROM tbl_movies WHERE title LIKE `:query` LIMIT " . $take . " OFFSET " . $skip;
+$sql = "SELECT * FROM tbl_movies WHERE title LIKE :query ORDER BY title LIMIT " . $take . " OFFSET " . $skip;
 
 $stmt = $conn->prepare($sql);
-$stmt->bindValue(':query', $query);
+$stmt->bindValue(':query', $query . "%");
 $stmt->execute();
 $result = $stmt->fetchAll(PDO::FETCH_OBJ);
 echo json_encode($result);
