@@ -85,7 +85,7 @@ if ($data != "") {
 } else {
     $data = getData("https://raw.githubusercontent.com/casbah-ma/cinedantan/master/public/database/movies.json");
     try {
-        file_put_contents("../data/movies.json", $movies);
+        file_put_contents("../data/movies.json", $data);
         if (!file_exists("../data/movies.json"))
             throw new Exception("Could not create movie file");
         echo "OK";
@@ -190,7 +190,7 @@ if ($go) {
                                 echo "- Inserted movie id: " . $movieid . " using file " . $useFile . eol();
                             } catch (Exception $ex) {
                                 echo "- ERROR inserting movie: " . $movie['title'] . eol();
-                                array_push($movie['title']);
+                                array_push($errors, $movie['title']);
                             } 
                         }
                     }
