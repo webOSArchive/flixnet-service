@@ -157,10 +157,10 @@ if ($go) {
                                 $stmt->bindValue(':rating', $movie['rating']);
                                 $stmt->bindValue(':language', $tmdbData->movie_results[0]->original_language);
                                 $stmt->bindValue(':adult', $tmdbData->movie_results[0]->adult);
-                                $stmt->bindValue(':identifier', $movie['rating']);
+                                $stmt->bindValue(':identifier', $movie['identifier']);
                                 $stmt->bindValue(':moviepath', $useFile);
-                                $stmt->bindValue(':backdrop', $posterURL . $tmdbData->movie_results[0]->poster_path);
-                                $stmt->bindValue(':poster', $backdropURL . $tmdbData->movie_results[0]->backdrop_path);
+                                $stmt->bindValue(':backdrop', $backdropURL . $tmdbData->movie_results[0]->backdrop_path);
+                                $stmt->bindValue(':poster', $posterURL . $tmdbData->movie_results[0]->poster_path);
                                 $stmt->execute();
                                 //TODO - handle bad data
                                 $movieid = $conn->lastInsertId();
