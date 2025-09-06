@@ -8,7 +8,7 @@ $title = "Flixnet";
 $subtitle = " | webOS Archive";
 $description = "Flixnet is a public domain movie browser created and hosted by webOS Archive for retro and modern devices.";
 $github = "https://github.com/webosarchive/flixnet-service";
-$pwaLink = "https://flixnet.wosa.link/app/";
+$pwaLink = "https://flixnet.webosarchive.org/app/";
 $museumLink = "https://appcatalog.webosarchive.org/app/Flixnet";
 $icon = "assets/icon-128.png";
 
