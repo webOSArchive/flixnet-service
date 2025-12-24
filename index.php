@@ -19,6 +19,7 @@ $pwaLink = $PROTOCOL."://flixnet.webosarchive.org/app/";
 $museumLink = $PROTOCOL."://appcatalog.webosarchive.org/app/Flixnet";
 $homeLink = $PROTOCOL."://flixnet.webosarchive.org";
 $icon = $homeLink."/assets/icon-128.png";
+$hero = $homeLink."/assets/hero.png";
 ?>
 <head>
   <meta charset="utf-8">
