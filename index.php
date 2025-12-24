@@ -3,21 +3,22 @@
 <?php
 //This file is only used for advertising on a hosting webserver
 
-//App Details
-$title = "Flixnet";
-$subtitle = " | webOS Archive";
-$description = "Flixnet is a public domain movie browser created and hosted by webOS Archive for retro and modern devices.";
-$github = "https://github.com/webosarchive/flixnet-service";
-$pwaLink = "https://flixnet.webosarchive.org/app/";
-$museumLink = "https://appcatalog.webosarchive.org/app/Flixnet";
-$icon = "assets/icon-128.png";
-
 //Figure out what protocol the client wanted
 if(isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
 	$PROTOCOL = "https";
 } else {
 	$PROTOCOL = "http";
 }
+
+//App Details
+$title = "Flixnet";
+$subtitle = " | webOS Archive";
+$description = "Flixnet is a public domain movie browser created and hosted by webOS Archive for retro and modern devices.";
+$github = "https://github.com/webosarchive/flixnet-service";
+$pwaLink = $PROTOCOL."://flixnet.webosarchive.org/app/";
+$museumLink = $PROTOCOL."://appcatalog.webosarchive.org/app/Flixnet";
+$homeLink = $PROTOCOL."://flixnet.webosarchive.org";
+$icon = $homeLink."/assets/icon-128.png";
 ?>
 <head>
   <meta charset="utf-8">
